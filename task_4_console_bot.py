@@ -9,11 +9,12 @@ def input_error(func):
             return "Give me the name and the phone!"
         except IndexError:
             return "Enter user name!"
-        
+    return inner
+
 def parse_input(user_input):
     cmd, *args = user_input.split()
     cmd = cmd.strip().lower()
-    return cmd, args
+    return cmd, *args
 
 @input_error
 def add_contact(args, contacts):
@@ -25,7 +26,7 @@ def add_contact(args, contacts):
 def change_contact(args, contacts):
     name, new_phone = args
     if name not in contacts:
-        raise KeyError
+        return "Error: Contact does not exist."
     contacts[name] = new_phone
     return "Contact changed."
 
@@ -35,21 +36,18 @@ def get_phone_by_name(args, contacts):
     if name in contacts:
         return contacts[name]
     else:
-        raise KeyError
+        return "Error: Contact does not exist."
     
 def all_contacts(contacts):
-    if contacts:
-        for name, phone in contacts.items():
-            print(f"{name}: {phone}")
-    else:
-        print("No contacts available.")
+    for name, phone in contacts.items():
+        print(f"{name}: {phone}")
 
 def main():
     contacts = {}
     print("Welcome to the assistant bot!")
     while True:
         user_input = input("Enter a command: ")
-        command, args = parse_input(user_input)
+        command, *args = parse_input(user_input)
 
         if command in ["close", "exit"]:
             print("Good bye!")
